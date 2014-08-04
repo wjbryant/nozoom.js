@@ -1,4 +1,4 @@
-/*! nozoom.js v0.0.1 | (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
+/*! nozoom.js v0.0.2 | (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
 
 /*jslint browser: true, white: true */
 /*global MouseEvent */
@@ -26,13 +26,14 @@ if (typeof nozoom.interceptEvents !== 'boolean') {
 
     var documentElement = document.documentElement;
 
-    // always display the full page even if zoom is applied
-    documentElement.style.zoom = 'reset';
-
     // some zoom factor calculations depend on the html element width being
     // 100% - explicitly setting it shouldn't hurt, since the width of this
     // element is not normally changed
-    documentElement.style.width = '100%';
+    // NOTE: this must be set first or some browsers will not honor zoom: reset
+    documentElement.style.cssText += 'width: 100% !important;';
+
+    // always display the full page even if zoom is applied
+    documentElement.style.zoom = 'reset';
 
 
     // ***** nozoom methods *****
@@ -97,7 +98,8 @@ if (typeof nozoom.interceptEvents !== 'boolean') {
                     return;
                 }
 
-                // use the old method of creating events for the MFP web browser
+                // use the old method of creating events to support older
+                // browsers
                 me = document.createEvent('MouseEvents');
 
                 // create a new event with all the same property values, but
