@@ -1,4 +1,4 @@
-/*! nozoom.js v0.0.2 | (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
+/*! nozoom.js v0.0.3 | (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
 
 /*jslint browser: true, white: true */
 /*global MouseEvent */
@@ -13,6 +13,9 @@ if (!nozoom || typeof nozoom !== 'object') {
 // defaults
 if (typeof nozoom.useFullscreen !== 'boolean') {
     nozoom.useFullscreen = false;
+}
+if (typeof nozoom.disableTextSelection !== 'boolean') {
+    nozoom.disableTextSelection = false;
 }
 if (typeof nozoom.extendMouseEvent !== 'boolean') {
     nozoom.extendMouseEvent = false;
@@ -60,6 +63,14 @@ if (typeof nozoom.interceptEvents !== 'boolean') {
         };
     };
 
+
+    if (nozoom.disableTextSelection) {
+        // do not allow text selection (only allow scrollbars to scroll)
+        // this disables touch gestures in some browsers
+        documentElement.addEventListener('selectstart', function (e) {
+            e.preventDefault();
+        }, false);
+    }
 
     if (nozoom.extendMouseEvent) {
         // extend MouseEvent to include additional coordinate properties that
