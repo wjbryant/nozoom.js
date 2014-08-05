@@ -1,46 +1,18 @@
-/*! nozoom.js v0.0.4 | (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
+/*! nozoom.js v0.0.5 | (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
 
 /*jslint browser: true, white: true */
 /*global MouseEvent */
 
 // the "nozoom" "namespace"
-var nozoom;
-
-if (!nozoom || typeof nozoom !== 'object') {
-    nozoom = {};
-}
-
-// defaults
-if (typeof nozoom.useFullscreen !== 'boolean') {
-    nozoom.useFullscreen = false;
-}
-if (typeof nozoom.disableTextSelection !== 'boolean') {
-    nozoom.disableTextSelection = false;
-}
-if (typeof nozoom.extendMouseEvent !== 'boolean') {
-    nozoom.extendMouseEvent = false;
-}
-if (typeof nozoom.interceptEvents !== 'boolean') {
-    nozoom.interceptEvents = true;
-}
-
-(function (window, document) {
+var nozoom = window.nozoom || (function (window, document) {
     'use strict';
 
-    var documentElement = document.documentElement;
+    var documentElement = document.documentElement,
+        textSelectionDisabled = false,
+        mouseEventExtended = false,
+        interceptingEvents = false;
 
-    // always display the full page even if zoom is applied
-    documentElement.style.zoom = 'reset';
-
-    // some zoom factor calculations depend on the html element width being
-    // 100% - explicitly setting it shouldn't hurt, since the width of this
-    // element is not normally changed
-    documentElement.style.cssText += 'width: 100% !important;';
-
-
-    // ***** nozoom methods *****
-
-    nozoom.getZoomFactor = function (useFullscreen) {
+    function getZoomFactor(useFullscreen) {
         if (!arguments.length) {
             useFullscreen = nozoom.useFullscreen;
         }
@@ -51,83 +23,133 @@ if (typeof nozoom.interceptEvents !== 'boolean') {
         return useFullscreen ?
             window.screen.availWidth / window.innerWidth :
             documentElement.offsetWidth / documentElement.clientWidth;
-    };
+    }
 
-    nozoom.adjustCoords = function (x, y, useFullscreen) {
-        var zoomFactor = nozoom.getZoomFactor(useFullscreen);
+    function adjustCoords(x, y, useFullscreen) {
+        var zoomFactor = getZoomFactor(useFullscreen);
 
         return {
             x: x * zoomFactor,
             y: y * zoomFactor
         };
-    };
-
-
-    if (nozoom.disableTextSelection) {
-        // do not allow text selection (only allow scrollbars to scroll)
-        // this disables touch gestures in some browsers
-        documentElement.addEventListener('selectstart', function (e) {
-            e.preventDefault();
-        }, false);
     }
 
-    if (nozoom.extendMouseEvent) {
-        // extend MouseEvent to include additional coordinate properties that
-        // account for the zoom level
-        [
-            'screenX', 'screenY', 'clientX', 'clientY', 'pageX', 'pageY'
-        ].forEach(function (prop) {
-            Object.defineProperty(MouseEvent.prototype, prop + 'Zoom', {
-                get: function () {
-                    return this[prop] * nozoom.getZoomFactor();
-                }
+    function disableTextSelection() {
+        if (!textSelectionDisabled) {
+            // do not allow text selection (only allow scrollbars to scroll)
+            // this disables touch gestures in some browsers
+            documentElement.addEventListener('selectstart', function (e) {
+                e.preventDefault();
+            }, false);
+
+            textSelectionDisabled = true;
+        }
+    }
+
+    function extendMouseEvent() {
+        if (!mouseEventExtended) {
+            // extend MouseEvent to include additional coordinate properties
+            // that account for the zoom level
+            [
+                'screenX', 'screenY', 'clientX', 'clientY', 'pageX', 'pageY'
+            ].forEach(function (prop) {
+                Object.defineProperty(MouseEvent.prototype, prop + 'Zoom', {
+                    get: function () {
+                        return this[prop] * getZoomFactor();
+                    }
+                });
             });
-        });
+
+            mouseEventExtended = true;
+        }
     }
 
-    if (nozoom.interceptEvents) {
-        // intercept all mouse events and adjust coordinate values for zoom
-        [
-            'click', 'contextmenu', 'dblclick', 'mousedown', 'mouseenter',
-            'mouseleave', 'mousemove', 'mouseout', 'mouseover', 'mouseup',
-            'show'
-        ].forEach(function (type) {
-            window.addEventListener(type, function (e) {
-                var zoomFactor,
-                    me;
+    function interceptEvents() {
+        if (!interceptingEvents) {
+            // intercept all mouse events and adjust coordinate values for zoom
+            [
+                'click', 'contextmenu', 'dblclick', 'mousedown', 'mouseenter',
+                'mouseleave', 'mousemove', 'mouseout', 'mouseover', 'mouseup',
+                'show'
+            ].forEach(function (type) {
+                window.addEventListener(type, function (e) {
+                    var zoomFactor,
+                        me;
 
-                // only intercept native events
-                if (e.synthetic) {
-                    return;
-                }
+                    // only intercept native events
+                    if (e.synthetic) {
+                        return;
+                    }
 
-                zoomFactor = nozoom.getZoomFactor();
+                    zoomFactor = getZoomFactor();
 
-                // only dispatch a new event when the page is zoomed
-                if (zoomFactor === 1) {
-                    return;
-                }
+                    // only dispatch a new event when the page is zoomed
+                    if (zoomFactor === 1) {
+                        return;
+                    }
 
-                // use the old method of creating events to support older
-                // browsers
-                me = document.createEvent('MouseEvents');
+                    // use the old method of creating events to support older
+                    // browsers
+                    me = document.createEvent('MouseEvents');
 
-                // create a new event with all the same property values, but
-                // multiply the coordinate properties by the zoom factor
-                me.initMouseEvent(e.type, true, true, window, e.detail,
-                    e.screenX * zoomFactor, e.screenY * zoomFactor,
-                    e.clientX * zoomFactor, e.clientY * zoomFactor, e.ctrlKey,
-                    e.altKey, e.shiftKey, e.metaKey, e.button, e.relatedTarget);
+                    // create a new event with all the same property values,
+                    // but multiply the coordinate properties by the zoom factor
+                    me.initMouseEvent(e.type, true, true, window, e.detail,
+                        e.screenX * zoomFactor, e.screenY * zoomFactor,
+                        e.clientX * zoomFactor, e.clientY * zoomFactor,
+                        e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button,
+                        e.relatedTarget);
 
-                // mark this event as synthetic so it can be filtered later
-                me.synthetic = true;
+                    // mark this event as synthetic so it can be filtered later
+                    me.synthetic = true;
 
-                e.target.dispatchEvent(me);
+                    e.target.dispatchEvent(me);
 
-                // allow the default action or scrolling will be disabled
-                // do not allow other event listeners to be executed
-                e.stopImmediatePropagation();
-            }, true);
-        });
+                    // allow the default action or scrolling will be disabled
+                    // do not allow other event listeners to be executed
+                    e.stopImmediatePropagation();
+                }, true);
+            });
+
+            interceptingEvents = true;
+        }
     }
+
+    function init(opts) {
+        if (typeof opts !== 'object') {
+            opts = {};
+        }
+
+        if (opts.hasOwnProperty('useFullscreen')) {
+            nozoom.useFullscreen = opts.useFullscreen;
+        }
+
+        if (opts.disableTextSelection) {
+            disableTextSelection();
+        }
+
+        if (opts.extendMouseEvent) {
+            extendMouseEvent();
+        }
+
+        if (!opts.hasOwnProperty('interceptEvents') || opts.interceptEvents) {
+            interceptEvents();
+        }
+    }
+
+    // always display the full page even if zoom is applied
+    documentElement.style.zoom = 'reset';
+
+    // some zoom factor calculations depend on the html element width being
+    // 100% - explicitly setting it shouldn't hurt, since the width of this
+    // element is not normally changed
+    documentElement.style.cssText += 'width: 100% !important;';
+
+    // the nozoom namespace object
+    return {
+        useFullscreen: false,
+        getZoomFactor: getZoomFactor,
+        adjustCoords: adjustCoords,
+        init: init
+    };
 }(window, document));
