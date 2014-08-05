@@ -35,4 +35,4 @@ Initialize nozoom with the following options:
 
 - interceptEvents
   `boolean` - Whether to intercept all mouse events and adjust coordinate
-  values for the zoom factor
+  values for the zoom factor. The default value is `true`.
