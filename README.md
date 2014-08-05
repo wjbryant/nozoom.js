@@ -27,11 +27,13 @@ Initialize nozoom with the following options:
 
 - disableTextSelection
   `boolean` - Whether to disable text selection and only allow scrollbars to
-  scroll. This disables touch gestures in some browsers.
+  scroll. This disables touch gestures in some browsers. The default value is
+  `false`.
 
 - extendMouseEvent
   `boolean` - Whether to extend mouse event objects to include additional
-  coordinate properties that account for the zoom level. Ex: `clientXZoom`.
+  coordinate properties that account for the zoom level. Ex: `clientXZoom`. The
+  default value is `false`.
 
 - interceptEvents
   `boolean` - Whether to intercept all mouse events and adjust coordinate
