@@ -2,23 +2,33 @@
 
 Disables zooming in browsers that do not support the viewport meta tag.
 
-## nozoom.useFullscreen
+## Requirements
+
+CSS zoom must be supported by the browser for nozoom.js to function properly.
+
+## Usage
+
+### nozoom.zoomSupported
+
+Indicates whether the browser supports CSS zoom.
+
+### nozoom.useFullscreen
 
 Set this to `true` to use properties based on the full screen size to calculate
 the zoom factor. The default value is `false`.
 
-## nozoom.getZoomFactor(useFullscreen)
+### nozoom.getZoomFactor(useFullscreen)
 
 Returns the current zoom factor. Pass a boolean value to override
 `nozoom.useFullscreen`.
 
-## nozoom.adjustCoords(x, y, useFullscreen)
+### nozoom.adjustCoords(x, y, useFullscreen)
 
 Returns an object with `x` and `y` properties that contain the adjusted x and y
 values for the current zoom factor. The third argument can be used to override
 `nozoom.useFullscreen`.
 
-## nozoom.init(opts)
+### nozoom.init(opts)
 
 Initialize nozoom with the following options:
 
