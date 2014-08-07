@@ -1,4 +1,4 @@
-/*! nozoom.js v0.1.0 | https://github.com/wjbryant/nozoom.js
+/*! nozoom.js v0.1.1 | https://github.com/wjbryant/nozoom.js
 (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
 
 /*jslint browser: true, devel: true */
@@ -176,7 +176,9 @@ var nozoom = window.nozoom || (function (window, document) {
             extendMouseEvent();
         }
 
-        if (!opts.hasOwnProperty('interceptEvents') || opts.interceptEvents) {
+        if (zoomSupported && (!opts.hasOwnProperty('interceptEvents') ||
+            opts.interceptEvents)) {
+
             interceptEvents();
         }
     }
@@ -186,7 +188,8 @@ var nozoom = window.nozoom || (function (window, document) {
         pStyle.cssText = 'zoom: reset;';
         zoomResetSupported = (pStyle.zoom !== '');
     } else {
-        console.warn('nozoom.js :: CSS zoom is not supported');
+        console.warn('nozoom.js :: CSS zoom is not supported. The ' +
+            'interceptEvents option is disabled.');
     }
 
     // no longer need pStyle for testing
