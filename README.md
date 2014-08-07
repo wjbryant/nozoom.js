@@ -8,9 +8,12 @@ CSS zoom must be supported by the browser for nozoom.js to function properly.
 
 ## Usage
 
-### nozoom.zoomSupported
+### nozoom.support
 
-Indicates whether the browser supports CSS zoom.
+An object containing the following properties:
+
+- `cssZoom` - Indicates whether the browser supports CSS zoom.
+- `cssZoomReset` - Indicates whether the browser supports CSS zoom reset.
 
 ### nozoom.useFullscreen
 
@@ -32,19 +35,15 @@ values for the current zoom factor. The third argument can be used to override
 
 Initialize nozoom with the following options:
 
-- useFullscreen
-  `boolean` - Sets `nozoom.useFullscreen`.
+- `useFullscreen`: `boolean` - Sets `nozoom.useFullscreen`.
 
-- disableTextSelection
-  `boolean` - Whether to disable text selection and only allow scrollbars to
-  scroll. This disables touch gestures in some browsers. The default value is
-  `false`.
+- `disableTextSelection`: `boolean` - Whether to disable text selection and
+  only allow scrollbars to scroll. This disables touch gestures in some
+  browsers. The default value is `false`.
 
-- extendMouseEvent
-  `boolean` - Whether to extend mouse event objects to include additional
-  coordinate properties that account for the zoom level. Ex: `clientXZoom`. The
-  default value is `false`.
+- `extendMouseEvent`: `boolean` - Whether to extend mouse event objects to
+  include additional coordinate properties that account for the zoom level.
+  Ex: `clientXZoom`. The default value is `false`.
 
-- interceptEvents
-  `boolean` - Whether to intercept all mouse events and adjust coordinate
-  values for the zoom factor. The default value is `true`.
+- `interceptEvents`: `boolean` - Whether to intercept all mouse events and
+  adjust coordinate values for the zoom factor. The default value is `true`.

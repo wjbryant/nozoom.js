@@ -1,4 +1,4 @@
-/*! nozoom.js v0.0.6 | https://github.com/wjbryant/nozoom.js
+/*! nozoom.js v0.1.0 | https://github.com/wjbryant/nozoom.js
 (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
 
 /*jslint browser: true, devel: true */
@@ -15,6 +15,7 @@ var nozoom = window.nozoom || (function (window, document) {
         interceptingEvents = false,
         pStyle = document.createElement('p').style,
         zoomSupported = (typeof pStyle.zoom === 'string'),
+        zoomResetSupported = false,
         initialized = false;
 
     function getZoomFactor(useFullscreen) {
@@ -129,11 +130,7 @@ var nozoom = window.nozoom || (function (window, document) {
     function setUp() {
         // always display the full page even if zoom is applied
         if (!initialized && zoomSupported) {
-            // test for zoom reset support
-            pStyle.cssText = 'zoom: reset;';
-
-            if (pStyle.zoom !== '') {
-                // zoom reset is supported, use it
+            if (zoomResetSupported) {
                 documentElementStyle.zoom = 'reset';
             } else {
                 // zoom reset is not supported, listen for the window resize
@@ -149,9 +146,6 @@ var nozoom = window.nozoom || (function (window, document) {
                     documentElementStyle.zoom = 1 / getZoomFactor(true);
                 }, false);
             }
-
-            // no longer need pStyle for testing
-            pStyle = null;
 
             // some zoom factor calculations depend on the html element width
             // being 100% - explicitly setting it shouldn't hurt, since the
@@ -187,13 +181,23 @@ var nozoom = window.nozoom || (function (window, document) {
         }
     }
 
-    if (!zoomSupported) {
+    if (zoomSupported) {
+        // test for zoom reset support
+        pStyle.cssText = 'zoom: reset;';
+        zoomResetSupported = (pStyle.zoom !== '');
+    } else {
         console.warn('nozoom.js :: CSS zoom is not supported');
     }
 
+    // no longer need pStyle for testing
+    pStyle = null;
+
     // the nozoom namespace object
     return {
-        zoomSupported: zoomSupported,
+        support: {
+            cssZoom: zoomSupported,
+            cssZoomReset: zoomResetSupported
+        },
         useFullscreen: false,
         getZoomFactor: getZoomFactor,
         adjustCoords: adjustCoords,
