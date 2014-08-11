@@ -137,7 +137,7 @@ var nozoom = window.nozoom || (function (window, document) {
                 // event - documentElement.offsetWidth and clientWidth will
                 // always be the same before resetting the CSS zoom - need to
                 // base calculations on fullscreen instead
-                console.warn('nozoom.js :: falling back to fullscreen' +
+                console.warn('nozoom.js :: falling back to fullscreen ' +
                     'calculations for resizing');
 
                 window.addEventListener('resize', function () {
