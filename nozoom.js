@@ -1,4 +1,4 @@
-/*! nozoom.js v0.1.1 | https://github.com/wjbryant/nozoom.js
+/*! nozoom.js v0.1.2 | https://github.com/wjbryant/nozoom.js
 (c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
 
 /*jslint browser: true, devel: true */
@@ -41,7 +41,7 @@ var nozoom = window.nozoom || (function (window, document) {
     }
 
     function disableTextSelection() {
-        if (textSelectionDisabled) {
+        if (textSelectionDisabled || !window.addEventListener) {
             return;
         }
 
@@ -55,7 +55,7 @@ var nozoom = window.nozoom || (function (window, document) {
     }
 
     function extendMouseEvent() {
-        if (mouseEventExtended) {
+        if (mouseEventExtended || !Array.prototype.forEach || !Object.defineProperty) {
             return;
         }
 
@@ -75,7 +75,8 @@ var nozoom = window.nozoom || (function (window, document) {
     }
 
     function interceptEvents() {
-        if (interceptingEvents) {
+        if (interceptingEvents || !Array.prototype.forEach ||
+                !window.addEventListener || !document.createEvent) {
             return;
         }
 
@@ -132,7 +133,7 @@ var nozoom = window.nozoom || (function (window, document) {
         if (!initialized && zoomSupported) {
             if (zoomResetSupported) {
                 documentElementStyle.zoom = 'reset';
-            } else {
+            } else if (window.addEventListener) {
                 // zoom reset is not supported, listen for the window resize
                 // event - documentElement.offsetWidth and clientWidth will
                 // always be the same before resetting the CSS zoom - need to

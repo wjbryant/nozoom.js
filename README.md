@@ -4,8 +4,12 @@ Disables zooming in browsers that do not support the viewport meta tag.
 
 ## Requirements
 
-CSS zoom must be supported by the browser for nozoom.js to prevent zooming. The
+- CSS zoom must be supported by the browser for nozoom.js to prevent zooming. The
 interceptEvents option is automatically disabled if CSS zoom is not supported.
+- addEventListener
+- Object.defineProperty
+- Array.prototype.forEach
+- document.createEvent
 
 ## Usage
 
