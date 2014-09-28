@@ -15,7 +15,7 @@ interceptEvents option is automatically disabled if CSS zoom is not supported.
 
 ### nozoom.support
 
-An object containing the following properties:
+This is an object containing the following properties:
 
 - `cssZoom` - Indicates whether the browser supports CSS zoom.
 - `cssZoomReset` - Indicates whether the browser supports CSS zoom reset.
@@ -25,12 +25,12 @@ An object containing the following properties:
 Set this to `true` to use properties based on the full screen size to calculate
 the zoom factor. The default value is `false`.
 
-### nozoom.getZoomFactor(useFullscreen)
+### nozoom.getZoomFactor([useFullscreen])
 
 Returns the current zoom factor. Pass a boolean value to override
 `nozoom.useFullscreen`.
 
-### nozoom.adjustCoords(x, y, useFullscreen)
+### nozoom.adjustCoords(x, y, [useFullscreen])
 
 Returns an object with `x` and `y` properties that contain the adjusted x and y
 values for the current zoom factor. The third argument can be used to override
