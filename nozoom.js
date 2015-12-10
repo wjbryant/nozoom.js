@@ -1,5 +1,5 @@
-/*! nozoom.js v0.1.2 | https://github.com/wjbryant/nozoom.js
-(c) 2014 Bill Bryant | http://opensource.org/licenses/mit */
+/*! nozoom.js v0.1.3 | https://github.com/wjbryant/nozoom.js
+(c) 2015 Bill Bryant | http://opensource.org/licenses/mit */
 
 /*jslint browser: true, devel: true */
 /*global MouseEvent */
@@ -16,7 +16,10 @@ var nozoom = window.nozoom || (function (window, document) {
         pStyle = document.createElement('p').style,
         zoomSupported = (typeof pStyle.zoom === 'string'),
         zoomResetSupported = false,
-        initialized = false;
+        initialized = false,
+        warn = window.console && typeof console.warn === 'function' ?
+            console.warn :
+            function () {};
 
     function getZoomFactor(useFullscreen) {
         if (!arguments.length) {
@@ -138,7 +141,7 @@ var nozoom = window.nozoom || (function (window, document) {
                 // event - documentElement.offsetWidth and clientWidth will
                 // always be the same before resetting the CSS zoom - need to
                 // base calculations on fullscreen instead
-                console.warn('nozoom.js :: falling back to fullscreen ' +
+                warn('nozoom.js :: falling back to fullscreen ' +
                     'calculations for resizing');
 
                 window.addEventListener('resize', function () {
@@ -189,7 +192,7 @@ var nozoom = window.nozoom || (function (window, document) {
         pStyle.cssText = 'zoom: reset;';
         zoomResetSupported = (pStyle.zoom !== '');
     } else {
-        console.warn('nozoom.js :: CSS zoom is not supported. The ' +
+        warn('nozoom.js :: CSS zoom is not supported. The ' +
             'interceptEvents option is disabled.');
     }
 
